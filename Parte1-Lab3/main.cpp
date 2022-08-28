@@ -21,6 +21,7 @@ struct sumPrimos {
     int idHilo;
     int cantHilos;
     int noPorCadaHilo;
+    int Resultado;
 
 };
 
@@ -31,10 +32,14 @@ void *calculoPrimos(void *structura ) {
 
     int minimo = (ps -> idHilo)*(ps -> noPorCadaHilo);
     int maximo = minimo + ((ps -> noPorCadaHilo)-1);
-    cout << "Hilo " << ps -> idHilo << ": " << endl;
+    cout << "---Hilo " << ps -> idHilo << ":--- " << endl;
+    
 
     if (ps -> idHilo == (ps -> cantHilos) - 1){
-        maximo = maximo + 1;
+        maximo = maximo + 1 + (ps -> maximo)%(ps -> cantHilos);
+        cout << "Minimo: " << minimo << endl;
+        cout << "Maximo: " << maximo << endl;
+
         cout << "Los numeros primos son:" << endl;
         for (int i = minimo; i <= maximo; i++){
             int n, h, flag = 0;
@@ -67,6 +72,8 @@ void *calculoPrimos(void *structura ) {
         cout << "Suma: " << suma << endl;
     }
     else{
+        cout << "Minimo: " << minimo << endl;
+        cout << "Maximo: " << maximo << endl;
         cout << "Los numeros primos son:" << endl;
         for (int i = minimo; i <= maximo; i++){
             int n, h, flag = 0;
@@ -99,7 +106,7 @@ void *calculoPrimos(void *structura ) {
         cout << "Suma: " << suma << endl;
     }
 
-
+    ps -> Resultado = suma;
     pthread_exit(NULL);
 }
 
@@ -107,6 +114,7 @@ int main() {
     pthread_t thread;
     int i;
     sumPrimos p;
+    int SumaTotal = 0;
 
     cout << "Ingrese el numero maximo: " << endl;
     cin >> p.maximo;
@@ -119,9 +127,11 @@ int main() {
         p.idHilo = i;
         pthread_create(&thread, NULL, calculoPrimos, ( void *)&p);
         pthread_join(thread, NULL);
+        SumaTotal = SumaTotal + p.Resultado;
 
     }
 
+    cout << "La suma total de los numeros primos de 0 --> " << p.maximo << " es de: "  << SumaTotal << endl;
 
     printf ("\n --- Fin --- \n");
 }
