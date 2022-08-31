@@ -15,44 +15,56 @@ Pide una cantidad de threads y una rango de numeros para poder sumar todos los n
 using namespace std;
 
 
-void *Sumatoria(void *n ) {
-    float resultado = 0;
-    int Numero = 0;
-    Numero = *(int*)n;
+void *Sumatoria(void *argument ) {
 
-    resultado = Numero * (Numero + 1);
-    resultado = 1/resultado;
+    float *total = (float *)malloc(sizeof(float));
+    float resultado = 0.0;
+	float *input = (float *)argument;
+
+    float numeroSumatoria = *input;
+
+    resultado = (numeroSumatoria) * (numeroSumatoria + 1);
+    *total = (1/resultado);
     
-    cout << resultado << endl;
-    
-    return (void*) resultado;
+    cout << "Cuando n = " << numeroSumatoria << " el subtotal es de  --- " << *total << " ---" << endl;
+
+    return (void *) total;
     //pthread_exit(NULL);
     //pthread_exit((void *) IntResultado);
 }
 
 int main() {
+
     float SumaTotal = 0;
     int n = 0;
-    int i;
-    float SumaPorHilo = 0;
+
     pthread_t idThread;
+    pthread_attr_t attr;
+
+    pthread_attr_init(&attr);
+    pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
 
     cout << "Ingrese el numero n maximo: " << endl;
     cin >> n;
-    
+    void *exit_value;
 
-    for(i = 1; i <= n; i++){
-        
-        pthread_create(&idThread, NULL, Sumatoria, ( void *)&i);
+    for(int i = 1; i <= n; i++){
+
+        float v = (float)i;
+        pthread_create(&idThread, &attr, Sumatoria, ( void *)&v);
         //pthread_join(idThread, NULL);
         
-        pthread_join(idThread, (void **)&SumaPorHilo);
-        float result = (float) SumaPorHilo;
+        pthread_join(idThread, &exit_value);
+        float *result = (float*) exit_value;
 
-        SumaTotal = SumaTotal + result;
+        SumaTotal = SumaTotal + *(result);
+        free(exit_value);
     }
 
     cout << "La sumatoria de n = 0 hasta n = " << n << " es de: "  << SumaTotal << endl;
 
     printf ("\n --- Fin --- \n");
+    pthread_attr_destroy(&attr);
+	pthread_exit(NULL);
+    return 0;
 }
