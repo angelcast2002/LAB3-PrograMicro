@@ -61,7 +61,7 @@ int main() {
         free(exit_value);
     }
 
-    cout << "La sumatoria de n = 0 hasta n = " << n << " es de: "  << SumaTotal << endl;
+    cout << "La sumatoria de n = 1 hasta n = " << n << " es de: "  << SumaTotal << endl;
 
     printf ("\n --- Fin --- \n");
     pthread_attr_destroy(&attr);
